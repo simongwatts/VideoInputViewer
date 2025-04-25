@@ -13,7 +13,11 @@
         private System.Windows.Forms.ToolStripMenuItem menuFile;
         private System.Windows.Forms.ToolStripMenuItem menuRefresh;
         private System.Windows.Forms.ToolStripMenuItem menuSnapshot;
-        private System.Windows.Forms.ToolStripMenuItem menuToggleControls;
+        private System.Windows.Forms.ToolStripMenuItem menuToggleButtons;
+        private System.Windows.Forms.ToolStripMenuItem menuToggleComboboxes;
+        private System.Windows.Forms.ToolStripMenuItem menuExit;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 
         protected override void Dispose(bool disposing)
         {
@@ -39,7 +43,11 @@
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSnapshot = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuToggleControls = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuToggleButtons = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuToggleComboboxes = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -124,7 +132,11 @@
             this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuRefresh,
             this.menuSnapshot,
-            this.menuToggleControls});
+            this.toolStripSeparator1,
+            this.menuToggleButtons,
+            this.menuToggleComboboxes,
+            this.toolStripSeparator2,
+            this.menuExit});
             this.menuFile.Name = "menuFile";
             this.menuFile.Size = new System.Drawing.Size(46, 24);
             this.menuFile.Text = "&File";
@@ -145,13 +157,39 @@
             this.menuSnapshot.Text = "&Snapshot";
             this.menuSnapshot.Click += new System.EventHandler(this.menuSnapshot_Click);
             // 
-            // menuToggleControls
+            // toolStripSeparator1
             // 
-            this.menuToggleControls.Name = "menuToggleControls";
-            this.menuToggleControls.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.menuToggleControls.Size = new System.Drawing.Size(224, 26);
-            this.menuToggleControls.Text = "&Hide Controls";
-            this.menuToggleControls.Click += new System.EventHandler(this.menuToggleControls_Click);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(221, 6);
+            // 
+            // menuToggleButtons
+            // 
+            this.menuToggleButtons.Name = "menuToggleButtons";
+            this.menuToggleButtons.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+            this.menuToggleButtons.Size = new System.Drawing.Size(224, 26);
+            this.menuToggleButtons.Text = "Hide Buttons";
+            this.menuToggleButtons.Click += new System.EventHandler(this.menuToggleButtons_Click);
+            // 
+            // menuToggleComboboxes
+            // 
+            this.menuToggleComboboxes.Name = "menuToggleComboboxes";
+            this.menuToggleComboboxes.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.menuToggleComboboxes.Size = new System.Drawing.Size(224, 26);
+            this.menuToggleComboboxes.Text = "Hide ComboBoxes";
+            this.menuToggleComboboxes.Click += new System.EventHandler(this.menuToggleComboboxes_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(221, 6);
+            // 
+            // menuExit
+            // 
+            this.menuExit.Name = "menuExit";
+            this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.menuExit.Size = new System.Drawing.Size(224, 26);
+            this.menuExit.Text = "E&xit";
+            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
             // MainForm
             // 

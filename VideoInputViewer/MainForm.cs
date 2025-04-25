@@ -18,7 +18,8 @@ namespace VideoInputViewer
         private int framesReceivedCounter;
         private bool isClosing;
         private string currentMoniker;
-        private bool controlsVisible = true;
+        private bool buttonsVisible = true;
+        private bool comboboxesVisible = true;
 
         public MainForm()
         {
@@ -207,13 +208,26 @@ namespace VideoInputViewer
         #region Menu Handlers
         private void menuRefresh_Click(object sender, EventArgs e) => btnRefresh.PerformClick();
         private void menuSnapshot_Click(object sender, EventArgs e) => btnSnapshot.PerformClick();
+        private void menuExit_Click(object sender, EventArgs e) => Application.Exit();
 
-        private void menuToggleControls_Click(object sender, EventArgs e)
+        private void menuToggleButtons_Click(object sender, EventArgs e)
         {
-            controlsVisible = !controlsVisible;
-            btnRefresh.Visible = controlsVisible;
-            btnSnapshot.Visible = controlsVisible;
-            menuToggleControls.Text = controlsVisible ? "Hide Controls" : "Show Controls";
+            buttonsVisible = !buttonsVisible;
+            btnRefresh.Visible = buttonsVisible;
+            btnSnapshot.Visible = buttonsVisible;
+            menuToggleButtons.Text = buttonsVisible ? "Hide Buttons" : "Show Buttons";
+        }
+
+        private void menuToggleComboboxes_Click(object sender, EventArgs e)
+        {
+            comboboxesVisible = !comboboxesVisible;
+            cboCameras.Visible = comboboxesVisible;
+            cboResolutions.Visible = comboboxesVisible;
+            menuToggleComboboxes.Text = comboboxesVisible ? "Hide ComboBoxes" : "Show ComboBoxes";
+
+            // Adjust picture box position and size
+            pictureBox.Top = comboboxesVisible ? 76 : 28;
+            pictureBox.Height = comboboxesVisible ? 374 : 422;
         }
         #endregion
     }
