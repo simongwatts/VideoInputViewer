@@ -18,6 +18,7 @@ namespace VideoInputViewer
         private int framesReceivedCounter;
         private bool isClosing;
         private string currentMoniker;
+        private bool controlsVisible = true;
 
         public MainForm()
         {
@@ -202,5 +203,18 @@ namespace VideoInputViewer
                 pictureBox.Image = null;
             }
         }
+
+        #region Menu Handlers
+        private void menuRefresh_Click(object sender, EventArgs e) => btnRefresh.PerformClick();
+        private void menuSnapshot_Click(object sender, EventArgs e) => btnSnapshot.PerformClick();
+
+        private void menuToggleControls_Click(object sender, EventArgs e)
+        {
+            controlsVisible = !controlsVisible;
+            btnRefresh.Visible = controlsVisible;
+            btnSnapshot.Visible = controlsVisible;
+            menuToggleControls.Text = controlsVisible ? "Hide Controls" : "Show Controls";
+        }
+        #endregion
     }
 }
