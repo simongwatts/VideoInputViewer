@@ -23,10 +23,9 @@ namespace VideoInputViewer
         private bool buttonsVisible = true;
         private bool comboboxesVisible = true;
 
-        // Blue background fields
+        // Blur background fields
         private BackgroundSubtractorMOG2 _backgroundSubtractor;
-        private Mat _backgroundMask;
-        private bool _blueBackgroundEnabled = false;
+        private bool _blurBackgroundEnabled = false;
 
         public MainForm()
         {
@@ -41,8 +40,11 @@ namespace VideoInputViewer
             DoubleBuffered = true;
 
             // Initialize background subtractor
-            _backgroundSubtractor = BackgroundSubtractorMOG2.Create(500, 16, true);
-            _backgroundMask = new Mat();
+            _backgroundSubtractor = BackgroundSubtractorMOG2.Create(
+                history: 500,
+                varThreshold: 32,
+                detectShadows: false
+            );
         }
 
         private void MainForm_Load(object sender, EventArgs e) => InitializeCameraSystem();
@@ -136,9 +138,9 @@ namespace VideoInputViewer
                 Interlocked.Increment(ref framesReceivedCounter);
                 using (Bitmap image = (Bitmap)eventArgs.Frame.Clone())
                 {
-                    if (_blueBackgroundEnabled)
+                    if (_blurBackgroundEnabled)
                     {
-                        ProcessBlueBackground(image);
+                        ProcessBlurBackground(image);
                     }
                     else
                     {
@@ -152,21 +154,46 @@ namespace VideoInputViewer
             }
         }
 
-        private void ProcessBlueBackground(Bitmap bitmap)
+        private void ProcessBlurBackground(Bitmap bitmap)
         {
             using (var mat = bitmap.ToMat())
-            using (var fgMask = new Mat())
             {
-                // Background subtraction
-                _backgroundSubtractor.Apply(mat, fgMask);
+                // Detect upper body using Haar Cascade
+                var cascade = new CascadeClassifier("haarcascade_upperbody.xml");
+                var bodies = cascade.DetectMultiScale(mat, 1.1, 3, HaarDetectionTypes.ScaleImage);
 
-                // Create blue background
-                using (var blueBackground = new Mat(mat.Size(), MatType.CV_8UC3))
+                // Create mask for non-body regions
+                using (var mask = new Mat(mat.Size(), MatType.CV_8UC1, Scalar.Black))
                 {
-                    blueBackground.SetTo(new Scalar(255, 0, 0)); // BGR color for blue
-                                                                 // Combine foreground and background
-                    mat.CopyTo(blueBackground, fgMask);
-                    UpdateVideoDisplay(blueBackground.ToBitmap());
+                    if (bodies.Length > 0)
+                    {
+                        // Create rectangle around detected body
+                        foreach (var body in bodies)
+                        {
+                            Cv2.Rectangle(mask, body, Scalar.White, -1);
+                        }
+
+                        // Expand mask slightly
+                        Cv2.Dilate(mask, mask, null, iterations: 3);
+
+                        // Blur the entire image
+                        using (var blurred = new Mat())
+                        {
+                            Cv2.GaussianBlur(mat, blurred, new OpenCvSharp.Size(55, 55), 0);
+
+                            // Combine original (body) and blurred (background)
+                            Mat result = new Mat();
+                            mat.CopyTo(result, mask);        // Keep body sharp
+                            blurred.CopyTo(result, ~mask);   // Blur background
+
+                            UpdateVideoDisplay(result.ToBitmap());
+                        }
+                    }
+                    else
+                    {
+                        // Fallback if no body detected
+                        UpdateVideoDisplay(bitmap);
+                    }
                 }
             }
         }
@@ -282,11 +309,11 @@ namespace VideoInputViewer
             pictureBox.Height = comboboxesVisible ? 374 : 422;
         }
 
-        private void menuToggleBlueBackground_Click(object sender, EventArgs e)
+        private void menuToggleBlurBackground_Click(object sender, EventArgs e)
         {
-            _blueBackgroundEnabled = !_blueBackgroundEnabled;
-            menuToggleBlueBackground.Text = _blueBackgroundEnabled ?
-                "Disable Blue Background" : "Enable Blue Background";
+            _blurBackgroundEnabled = !_blurBackgroundEnabled;
+            menuToggleBlurBackground.Text = _blurBackgroundEnabled ?
+                "Disable Blur Background" : "Enable Blur Background";
         }
 
         private void menuToggleTopMost_Click(object sender, EventArgs e)
