@@ -7,6 +7,8 @@ using System.Threading;
 using System.Windows.Forms;
 using AForge.Video;
 using AForge.Video.DirectShow;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
 
 namespace VideoInputViewer
 {
@@ -21,6 +23,11 @@ namespace VideoInputViewer
         private bool buttonsVisible = true;
         private bool comboboxesVisible = true;
 
+        // Blue background fields
+        private BackgroundSubtractorMOG2 _backgroundSubtractor;
+        private Mat _backgroundMask;
+        private bool _blueBackgroundEnabled = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -32,6 +39,10 @@ namespace VideoInputViewer
             TopMost = true;
             FormBorderStyle = FormBorderStyle.Sizable;
             DoubleBuffered = true;
+
+            // Initialize background subtractor
+            _backgroundSubtractor = BackgroundSubtractorMOG2.Create(500, 16, true);
+            _backgroundMask = new Mat();
         }
 
         private void MainForm_Load(object sender, EventArgs e) => InitializeCameraSystem();
@@ -123,7 +134,17 @@ namespace VideoInputViewer
             try
             {
                 Interlocked.Increment(ref framesReceivedCounter);
-                UpdateVideoDisplay((Bitmap)eventArgs.Frame.Clone());
+                using (Bitmap image = (Bitmap)eventArgs.Frame.Clone())
+                {
+                    if (_blueBackgroundEnabled)
+                    {
+                        ProcessBlueBackground(image);
+                    }
+                    else
+                    {
+                        UpdateVideoDisplay(image);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -131,25 +152,56 @@ namespace VideoInputViewer
             }
         }
 
+        private void ProcessBlueBackground(Bitmap bitmap)
+        {
+            using (var mat = bitmap.ToMat())
+            using (var fgMask = new Mat())
+            {
+                // Background subtraction
+                _backgroundSubtractor.Apply(mat, fgMask);
+
+                // Create blue background
+                using (var blueBackground = new Mat(mat.Size(), MatType.CV_8UC3))
+                {
+                    blueBackground.SetTo(new Scalar(255, 0, 0)); // BGR color for blue
+                                                                 // Combine foreground and background
+                    mat.CopyTo(blueBackground, fgMask);
+                    UpdateVideoDisplay(blueBackground.ToBitmap());
+                }
+            }
+        }
+
         private void UpdateVideoDisplay(Bitmap image)
         {
             if (pictureBox.InvokeRequired)
             {
-                pictureBox.BeginInvoke(new Action(() => SafeUpdatePictureBox(image)));
+                // Clone before cross-thread transfer
+                var cloned = (Bitmap)image.Clone();
+                pictureBox.BeginInvoke(new Action(() => {
+                    using (cloned) // Ensure disposal
+                    {
+                        SafeUpdatePictureBox(cloned);
+                    }
+                }));
             }
             else
             {
                 SafeUpdatePictureBox(image);
             }
         }
-
         private void SafeUpdatePictureBox(Bitmap image)
         {
             if (isClosing || pictureBox.IsDisposed) return;
 
-            var oldImage = pictureBox.Image;
-            pictureBox.Image = image;
-            oldImage?.Dispose();
+            // Create a non-animated copy to prevent ImageAnimator errors
+            using (var temp = new Bitmap(image.Width, image.Height))
+            using (var g = Graphics.FromImage(temp))
+            {
+                g.DrawImage(image, 0, 0, image.Width, image.Height);
+                var oldImage = pictureBox.Image;
+                pictureBox.Image = (Image)temp.Clone();
+                oldImage?.Dispose();
+            }
         }
 
         private void HandleResolutionChange()
@@ -228,6 +280,19 @@ namespace VideoInputViewer
             // Adjust picture box position and size
             pictureBox.Top = comboboxesVisible ? 76 : 28;
             pictureBox.Height = comboboxesVisible ? 374 : 422;
+        }
+
+        private void menuToggleBlueBackground_Click(object sender, EventArgs e)
+        {
+            _blueBackgroundEnabled = !_blueBackgroundEnabled;
+            menuToggleBlueBackground.Text = _blueBackgroundEnabled ?
+                "Disable Blue Background" : "Enable Blue Background";
+        }
+
+        private void menuToggleTopMost_Click(object sender, EventArgs e)
+        {
+            TopMost = !TopMost;
+            menuToggleTopMost.Text = TopMost ? "Disable TopMost" : "Enable TopMost";
         }
         #endregion
     }

@@ -15,6 +15,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuSnapshot;
         private System.Windows.Forms.ToolStripMenuItem menuToggleButtons;
         private System.Windows.Forms.ToolStripMenuItem menuToggleComboboxes;
+        private System.Windows.Forms.ToolStripMenuItem menuToggleBlueBackground;
+        private System.Windows.Forms.ToolStripMenuItem menuToggleTopMost;
         private System.Windows.Forms.ToolStripMenuItem menuExit;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -46,6 +48,8 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuToggleButtons = new System.Windows.Forms.ToolStripMenuItem();
             this.menuToggleComboboxes = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuToggleBlueBackground = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuToggleTopMost = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -137,6 +141,8 @@
             this.toolStripSeparator1,
             this.menuToggleButtons,
             this.menuToggleComboboxes,
+            this.menuToggleBlueBackground,
+            this.menuToggleTopMost,
             this.toolStripSeparator2,
             this.menuExit});
             this.menuFile.Name = "menuFile";
@@ -179,6 +185,22 @@
             this.menuToggleComboboxes.Size = new System.Drawing.Size(323, 34);
             this.menuToggleComboboxes.Text = "Hide ComboBoxes";
             this.menuToggleComboboxes.Click += new System.EventHandler(this.menuToggleComboboxes_Click);
+            // 
+            // menuToggleBlueBackground
+            // 
+            this.menuToggleBlueBackground.Name = "menuToggleBlueBackground";
+            this.menuToggleBlueBackground.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+            this.menuToggleBlueBackground.Size = new System.Drawing.Size(323, 34);
+            this.menuToggleBlueBackground.Text = "Blue Background";
+            this.menuToggleBlueBackground.Click += new System.EventHandler(this.menuToggleBlueBackground_Click);
+            // 
+            // menuToggleTopMost
+            // 
+            this.menuToggleTopMost.Name = "menuToggleTopMost";
+            this.menuToggleTopMost.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+            this.menuToggleTopMost.Size = new System.Drawing.Size(323, 34);
+            this.menuToggleTopMost.Text = "Disable TopMost";
+            this.menuToggleTopMost.Click += new System.EventHandler(this.menuToggleTopMost_Click);
             // 
             // toolStripSeparator2
             // 
